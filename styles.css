@@ -1,0 +1,20 @@
+.urdu-font {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1.125rem;
+}
+.category-button.active {
+  background-color: #1e40af;
+  color: white;
+  border-left: 4px solid #ffffff;
+}
+.sidebar-open {
+  transform: translateX(0);
+}
+.main-content-shift {
+  margin-left: 16rem;
+}
+@media (max-width: 640px) {
+  .main-content-shift {
+    margin-left: 0;
+  }
+}
