@@ -6,61 +6,42 @@
   <title>English Learning App</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
-  <style>
-    .urdu-font {
-      font-family: 'Noto Nastaliq Urdu', serif;
-      font-size: 1.125rem;
-    }
-    .category-button.active {
-      background-color: #1e40af;
-      color: white;
-      border-bottom: 3px solid #ffffff;
-    }
-    body {
-      padding-bottom: 4rem; /* Space for bottom nav */
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-    }
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 font-sans min-h-screen">
   <!-- Header -->
-  <header class="header bg-blue-600 text-white p-4 shadow-md flex items-center justify-between">
-    <button id="backButton" class="text-2xl font-bold">←</button>
-    <h1 class="text-xl sm:text-2xl font-bold">Learn English</h1>
-    <div class="w-8"></div> <!-- Placeholder for balance -->
+  <header class="fixed top-0 left-0 right-0 bg-blue-600 text-white p-4 shadow-md flex items-center justify-between z-50">
+    <button id="toggleSidebar" class="text-2xl font-bold">☰</button>
+    <h1 class="text-lg sm:text-xl md:text-2xl font-bold">Learn English</h1>
+    <div class="w-8"></div>
   </header>
 
+  <!-- Sidebar -->
+  <nav id="sidebar" class="fixed top-0 left-0 h-full bg-blue-800 text-white w-64 transform -translate-x-full transition-transform duration-300 z-50">
+    <div class="p-4">
+      <h2 class="text-xl font-bold mb-4">Categories</h2>
+      <div id="categoryNav" class="flex flex-col space-y-2"></div>
+    </div>
+  </nav>
+
   <!-- Main Content -->
-  <div class="container mx-auto p-4 pt-16 pb-20 max-w-4xl">
+  <div class="container mx-auto p-4 pt-16 max-w-4xl transition-all duration-300" id="mainContent">
     <!-- Controls -->
     <div class="bg-white p-4 rounded-lg shadow-md mb-4">
       <div class="flex flex-col space-y-4">
         <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
           <label class="flex items-center space-x-2">
             <input type="checkbox" id="showUrdu" class="h-5 w-5 text-blue-600">
-            <span class="text-lg text-gray-800">Urdu Meanings</span>
+            <span class="text-base sm:text-lg text-gray-800">Urdu Meanings</span>
           </label>
           <label class="flex items-center space-x-2">
             <input type="checkbox" id="showExamples" class="h-5 w-5 text-blue-600">
-            <span class="text-lg text-gray-800">Examples</span>
+            <span class="text-base sm:text-lg text-gray-800">Examples</span>
           </label>
         </div>
         <div class="flex items-center space-x-2">
-          <label for="sortOrder" class="text-lg text-gray-800">Sort:</label>
-          <select id="sortOrder" class="border rounded p-2 text-lg w-full sm:w-auto">
+          <label for="sortOrder" class="text-base sm:text-lg text-gray-800">Sort:</label>
+          <select id="sortOrder" class="border rounded p-2 text-base sm:text-lg w-full sm:w-auto">
             <option value="alphabetical">Alphabetical</option>
             <option value="usage">Usage Frequency</option>
           </select>
@@ -72,193 +53,7 @@
     <div id="wordGroups" class="space-y-6"></div>
   </div>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav bg-blue-600 text-white p-2 shadow-lg flex overflow-x-auto">
-    <div id="categoryNav" class="flex space-x-2"></div>
-  </nav>
-
-  <script>
-    const categoryColors = {
-      "Pronouns": "blue-100",
-      "Possessives": "green-100",
-      "Verbs": "purple-100",
-      "Directions & Prepositions": "pink-100",
-      "WH Questions": "yellow-100",
-      "Nouns": "indigo-100"
-    };
-
-    const cardColors = {
-      "Pronouns": "blue-200",
-      "Possessives": "green-200",
-      "Verbs": "purple-200",
-      "Directions & Prepositions": "pink-200",
-      "WH Questions": "yellow-200",
-      "Nouns": "indigo-200"
-    };
-
-    const wordData = [
-      // Pronouns (10 sample words)
-      { english: "I", urdu: "میں", example: "I am happy.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_1.mp3", type: "Pronouns", usage: 0.95 },
-      { english: "You", urdu: "تم", example: "You are kind.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_2.mp3", type: "Pronouns", usage: 0.90 },
-      { english: "He", urdu: "وہ (مرد)", example: "He runs fast.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_3.mp3", type: "Pronouns", usage: 0.85 },
-      { english: "She", urdu: "وہ (عورت)", example: "She sings well.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_4.mp3", type: "Pronouns", usage: 0.80 },
-      { english: "It", urdu: "یہ", example: "It is a dog.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_5.mp3", type: "Pronouns", usage: 0.75 },
-      { english: "We", urdu: "ہم", example: "We are friends.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_6.mp3", type: "Pronouns", usage: 0.70 },
-      { english: "They", urdu: "وہ (سب)", example: "They play together.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_7.mp3", type: "Pronouns", usage: 0.65 },
-      { english: "Me", urdu: "مجھے", example: "Give it to me.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_8.mp3", type: "Pronouns", usage: 0.60 },
-      { english: "Us", urdu: "ہمیں", example: "Join us for lunch.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_9.mp3", type: "Pronouns", usage: 0.55 },
-      { english: "Them", urdu: "انہیں", example: "I saw them yesterday.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_10.mp3", type: "Pronouns", usage: 0.50 },
-      
-      // Possessives (10 sample words)
-      { english: "Mine", urdu: "میرا", example: "This toy is mine.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_11.mp3", type: "Possessives", usage: 0.45 },
-      { english: "Yours", urdu: "تمہارا", example: "This book is yours.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_12.mp3", type: "Possessives", usage: 0.40 },
-      { english: "His", urdu: "اس کا (مرد)", example: "This is his pen.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_13.mp3", type: "Possessives", usage: 0.35 },
-      { english: "Hers", urdu: "اس کی (عورت)", example: "This is hers.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_14.mp3", type: "Possessives", usage: 0.30 },
-      { english: "Ours", urdu: "ہمارا", example: "This house is ours.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_15.mp3", type: "Possessives", usage: 0.25 },
-      { english: "Theirs", urdu: "ان کا", example: "Their garden is big.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_16.mp3", type: "Possessives", usage: 0.20 },
-      { english: "My", urdu: "میری", example: "My bag is red.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_17.mp3", type: "Possessives", usage: 0.15 },
-      { english: "Your", urdu: "تمہارے", example: "Your shoes are clean.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_18.mp3", type: "Possessives", usage: 0.10 },
-      { english: "Our", urdu: "ہمارے", example: "Our team won.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_19.mp3", type: "Possessives", usage: 0.05 },
-      { english: "Their", urdu: "ان کے", example: "Their car is new.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_20.mp3", type: "Possessives", usage: 0.03 },
-      
-      // Verbs (10 sample words)
-      { english: "Am", urdu: "ہوں", example: "I am a student.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_21.mp3", type: "Verbs", usage: 0.95 },
-      { english: "Are", urdu: "ہیں", example: "They are happy.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_22.mp3", type: "Verbs", usage: 0.90 },
-      { english: "Is", urdu: "ہے", example: "The sky is blue.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_23.mp3", type: "Verbs", usage: 0.85 },
-      { english: "Go", urdu: "جانا", example: "I go to school.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_24.mp3", type: "Verbs", usage: 0.80 },
-      { english: "Run", urdu: "دوڑنا", example: "They run fast.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_25.mp3", type: "Verbs", usage: 0.75 },
-      { english: "Eat", urdu: "کھانا", example: "I eat an apple.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_26.mp3", type: "Verbs", usage: 0.70 },
-      { english: "Play", urdu: "کھیلنا", example: "We play football.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_27.mp3", type: "Verbs", usage: 0.65 },
-      { english: "Sing", urdu: "گانا", example: "She sings well.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_28.mp3", type: "Verbs", usage: 0.60 },
-      { english: "Read", urdu: "پڑھنا", example: "I read a book.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_29.mp3", type: "Verbs", usage: 0.55 },
-      { english: "Write", urdu: "لکھنا", example: "He writes a letter.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_30.mp3", type: "Verbs", usage: 0.50 },
-      
-      // Directions & Prepositions (10 sample words)
-      { english: "Above", urdu: "اوپر", example: "The plane is above the clouds.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_31.mp3", type: "Directions & Prepositions", usage: 0.45 },
-      { english: "At", urdu: "پر", example: "I am at the park.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_32.mp3", type: "Directions & Prepositions", usage: 0.40 },
-      { english: "Behind", urdu: "پیچھے", example: "The dog is behind the tree.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_33.mp3", type: "Directions & Prepositions", usage: 0.35 },
-      { english: "Down", urdu: "نیچے", example: "The ball rolls down the hill.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_34.mp3", type: "Directions & Prepositions", usage: 0.30 },
-      { english: "In", urdu: "میں", example: "The cat is in the box.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_35.mp3", type: "Directions & Prepositions", usage: 0.25 },
-      { english: "On", urdu: "پر", example: "The book is on the table.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_36.mp3", type: "Directions & Prepositions", usage: 0.20 },
-      { english: "Under", urdu: "نیچے", example: "The cat is under the chair.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_37.mp3", type: "Directions & Prepositions", usage: 0.15 },
-      { english: "Up", urdu: "اوپر", example: "The balloon goes up.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_38.mp3", type: "Directions & Prepositions", usage: 0.10 },
-      { english: "Near", urdu: "قریب", example: "The shop is near my house.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_39.mp3", type: "Directions & Prepositions", usage: 0.05 },
-      { english: "Over", urdu: "اوپر", example: "The bird flies over the tree.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_40.mp3", type: "Directions & Prepositions", usage: 0.03 },
-      
-      // WH Questions (6 sample words)
-      { english: "How", urdu: "کیسے", example: "How are you?", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_41.mp3", type: "WH Questions", usage: 0.95 },
-      { english: "What", urdu: "کیا", example: "What is your name?", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_42.mp3", type: "WH Questions", usage: 0.90 },
-      { english: "When", urdu: "کب", example: "When is your birthday?", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_43.mp3", type: "WH Questions", usage: 0.85 },
-      { english: "Where", urdu: "کہاں", example: "Where is my book?", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_44.mp3", type: "WH Questions", usage: 0.80 },
-      { english: "Who", urdu: "کون", example: "Who is your friend?", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_45.mp3", type: "WH Questions", usage: 0.75 },
-      { english: "Why", urdu: "کیوں", example: "Why are you late?", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_46.mp3", type: "WH Questions", usage: 0.70 },
-      
-      // Nouns (4 sample words)
-      { english: "Apple", urdu: "سیب", example: "I eat an apple.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_47.mp3", type: "Nouns", usage: 0.65 },
-      { english: "Book", urdu: "کتاب", example: "I read a book.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_48.mp3", type: "Nouns", usage: 0.60 },
-      { english: "Car", urdu: "گاڑی", example: "The car is red.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_49.mp3", type: "Nouns", usage: 0.55 },
-      { english: "Dog", urdu: "کتّا", example: "The dog is playful.", audio: "https://cdn.pixabay.com/audio/2023/08/08/audio_50.mp3", type: "Nouns", usage: 0.50 }
-      // Extend with 950+ more words (e.g., nouns: cat, tree; verbs: jump, sleep; adjectives: big, small)
-    ];
-
-    const wordGroups = document.getElementById("wordGroups");
-    const categoryNav = document.getElementById("categoryNav");
-    const showUrdu = document.getElementById("showUrdu");
-    const showExamples = document.getElementById("showExamples");
-    const sortOrder = document.getElementById("sortOrder");
-    const backButton = document.getElementById("backButton");
-    let currentCategory = "All";
-
-    function renderCategoryNav() {
-      categoryNav.innerHTML = "";
-      const categories = ["All", ...new Set(wordData.map(word => word.type))].sort();
-      categories.forEach(category => {
-        const button = document.createElement("button");
-        button.className = `flex-1 px-3 py-2 rounded-lg text-sm sm:text-base font-semibold text-white ${currentCategory === category ? "category-button active" : "bg-blue-500 hover:bg-blue-600"}`;
-        button.textContent = category;
-        button.addEventListener("click", () => {
-          currentCategory = category;
-          renderGroups();
-          document.querySelectorAll(".category-button").forEach(btn => btn.classList.remove("active"));
-          button.classList.add("active");
-        });
-        categoryNav.appendChild(button);
-      });
-    }
-
-    function renderGroups() {
-      wordGroups.innerHTML = "";
-      let filteredWords = currentCategory === "All" ? wordData : wordData.filter(word => word.type === currentCategory);
-      
-      filteredWords = filteredWords.sort((a, b) => {
-        if (sortOrder.value === "alphabetical") {
-          return a.english.localeCompare(b.english);
-        } else {
-          return b.usage - a.usage;
-        }
-      });
-
-      const groups = currentCategory === "All" ? [...new Set(filteredWords.map(word => word.type))].sort() : [currentCategory];
-      
-      groups.forEach(group => {
-        const groupDiv = document.createElement("div");
-        groupDiv.className = `p-4 rounded-lg shadow-md mb-4 bg-${categoryColors[group] || "blue-100"}`;
-        
-        const groupTitle = document.createElement("h2");
-        groupTitle.className = "text-2xl sm:text-3xl font-bold text-blue-800 mb-3";
-        groupTitle.textContent = group;
-        groupDiv.appendChild(groupTitle);
-        
-        const cardGrid = document.createElement("div");
-        cardGrid.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3";
-        
-        const groupWords = filteredWords.filter(word => word.type === group);
-        groupWords.forEach(word => {
-          const card = document.createElement("div");
-          card.className = `p-4 rounded-lg shadow-md cursor-pointer hover:scale-105 transition bg-${cardColors[word.type] || "blue-200"}`;
-          
-          const english = document.createElement("h3");
-          english.className = "text-xl sm:text-2xl font-bold text-blue-900";
-          english.textContent = word.english;
-          
-          const urdu = document.createElement("p");
-          urdu.className = `urdu-font text-base sm:text-lg text-gray-800 ${showUrdu.checked ? "" : "hidden"}`;
-          urdu.textContent = `(${word.urdu})`;
-          
-          const example = document.createElement("p");
-          example.className = `text-gray-700 italic text-sm sm:text-base ${showExamples.checked ? "" : "hidden"}`;
-          example.textContent = `Example: ${word.example}`;
-          
-          card.appendChild(english);
-          card.appendChild(urdu);
-          card.appendChild(example);
-          
-          card.addEventListener("click", () => {
-            const audio = new Audio(word.audio);
-            audio.play().catch(err => console.error("Audio playback error:", err));
-          });
-          
-          cardGrid.appendChild(card);
-        });
-        
-        groupDiv.appendChild(cardGrid);
-        wordGroups.appendChild(groupDiv);
-      });
-    }
-
-    showUrdu.addEventListener("change", renderGroups);
-    showExamples.addEventListener("change", renderGroups);
-    sortOrder.addEventListener("change", renderGroups);
-    backButton.addEventListener("click", () => {
-      currentCategory = "All";
-      renderGroups();
-      document.querySelectorAll(".category-button").forEach(btn => btn.classList.remove("active"));
-      document.querySelector(".category-button").classList.add("active");
-    });
-
-    // Initial render
-    renderCategoryNav();
-    renderGroups();
-  </script>
+  <script src="wordData.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
